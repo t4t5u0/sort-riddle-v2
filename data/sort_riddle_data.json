@@ -6,5 +6,13 @@
         "answer": null,
         "question": null,
         "start_time": null
+    },
+    {
+        "guild_id": 761580345090113566,
+        "guild_name": "Bot-test-1",
+        "channel_id": null,
+        "answer": null,
+        "question": null,
+        "start_time": null
     }
 ]

@@ -1,6 +1,5 @@
-import requests
+import csv
 
-link = 'https://ja.wikipedia.org/w/api.php?action=query&list=random&format=json'
-response = requests.get(link)
-json_data = response.json()
-print(json_data['query']['random'][0]['title'])
+with open('./data/guild_id_list.csv') as f:
+    reader = csv.reader(f)
+    print([int(y) for x in reader for y in x])

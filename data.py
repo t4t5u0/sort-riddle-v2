@@ -1,8 +1,6 @@
-from operator import index
-import pandas as pd 
+import requests
 
-df = pd.DataFrame([1, 2, 3],index=None)
-print(df)
-df.to_csv('./hoge.csv')
-df.to_csv('./fuga.csv', index=None)
-df.to_csv('./piyo.csv', index=None, header=False)
+link = 'https://ja.wikipedia.org/w/api.php?action=query&list=random&format=json'
+response = requests.get(link)
+json_data = response.json()
+print(json_data['query']['random'][0]['title'])

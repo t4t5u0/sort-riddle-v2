@@ -1,9 +1,11 @@
 # sort-riddle-v2
 
 ## sort-riddle-v2
+
 ソートなぞなぞを遊べるDiscord Bot です。2代目になります
 
 ## ソートなぞなぞとは
+
 `''.join(sorted(list(X)))` が与えられるので、`X` を推測する遊びです
 
 ## コマンド

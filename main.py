@@ -1,11 +1,8 @@
-import bisect
 import configparser
-import time
 
 import discord
 from discord.ext.commands import Bot
 
-from cog.sort_riddle import SortRiddleCog
 
 config = configparser.ConfigParser()
 config.read('./config.ini')

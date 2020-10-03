@@ -80,10 +80,10 @@ class SortRiddleCog(commands.Cog):
         with open('./data/sort_riddle_data.json', 'w') as f:
             json.dump(self.sort_riddle_data, f, indent=4)
 
-        self.guild_id_list.pop(guild.id)
+        self.guild_id_list.pop(to_delete_index)
         # df = pd.DataFrame(self.guild_id_list, index=None, columns=None)
         # df.to_csv('./data/guild_id_list.csv', index=None, header=False)
-        with open('./data/guild_id_list.csv') as f:
+        with open('./data/guild_id_list.csv', 'w') as f:
             writer = csv.writer(f)
             writer.writerow(self.guild_id_list)
 

@@ -1,6 +1,6 @@
 # sort-riddle-v2
 
-## 使い方
+## 起動方法
 ```bash
 $ git clone https://github.com/t4t5u0/sort-riddle-v2.git
 $ cd sort-riddle-v2

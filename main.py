@@ -8,7 +8,7 @@ config = configparser.ConfigParser()
 config.read('./config.ini')
 TOKEN = config['TOKEN']['token']
 
-bot = Bot(command_prefix='/')
+bot = Bot(command_prefix='!')
 bot.load_extension('cog.sort_riddle')
 
 

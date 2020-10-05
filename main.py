@@ -18,6 +18,8 @@ async def on_ready():
     print('-'*20)
     print('ログインしました')
     print('-'*20)
+    await bot.change_presence(activity=discord.Game(name='!help'))
+
 
 if __name__ == "__main__":
     bot.run(TOKEN)

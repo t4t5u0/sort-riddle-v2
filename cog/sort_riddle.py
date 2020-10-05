@@ -27,10 +27,11 @@ class SortRiddleCog(commands.Cog):
     async def neko(self, ctx):
         await ctx.send(f'{ctx.author.mention} にゃーん')
 
-    @commands.command()
-    async def show(self, ctx):
-        for item in self.sort_riddle_data:
-            await ctx.send(item)
+    # デバッグ用のコマンド
+    # @commands.command()
+    # async def show(self, ctx):
+    #     for item in self.sort_riddle_data:
+    #         await ctx.send(item)
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):

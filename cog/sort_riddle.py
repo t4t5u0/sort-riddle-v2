@@ -1,9 +1,9 @@
 import bisect
-# from pprint import pprint
 import csv
-import datetime
 import json
-import time
+# import time
+import re
+from datetime import datetime
 
 import discord
 import requests
@@ -73,18 +73,33 @@ class SortRiddleCog(commands.Cog):
     @commands.command()
     async def start(self, ctx):
 
-        # await ctx.send(f'{ctx.author}')
-        # await ctx.send(f'`{ctx.author.guild}`')
-        # # print(ctx.author.dm_channel)
-        # return
         if 'guild' not in dir(ctx.author):
             await ctx.send('**!start** はDM限定だにゃ')
             return
 
+        # guild_id が登録されていなかったときの処理
+        # 全部これでいい気もする
         index = bisect.bisect_left(self.guild_id_list, ctx.author.guild.id)
-        if self.guild_id_list[index] != ctx.author.guild.id:
-            await ctx.send('guild id が存在してないにゃ')
-            return
+        if ctx.author.guild.id not in self.guild_id_list:
+            info = {
+                "guild_id": ctx.author.guild.id,
+                "guild_name": ctx.author.guild.name,
+                "channel_id": None,
+                "answer": None,
+                "question": None,
+                "start_time": None
+            }
+            self.sort_riddle_data.insert(index, info)
+
+            with open('./data/sort_riddle_data.json', 'w') as f:
+                json.dump(self.sort_riddle_data, f, indent=4)
+
+            bisect.insort(self.guild_id_list, ctx.author.guild.id)
+            with open('./data/guild_id_list.csv', 'w') as f:
+                writer = csv.writer(f)
+                writer.writerow(self.guild_id_list)
+            # await ctx.send('guild id が存在してないにゃ')
+            # return
 
         if (q := self.sort_riddle_data[index]['question']) is not None:
             # print(q)
@@ -112,7 +127,7 @@ class SortRiddleCog(commands.Cog):
         self.sort_riddle_data[index]['question'] = q
         await ctx.send(f'問題は **{q}** だにゃ')
 
-        self.sort_riddle_data[index]['start_time'] = time.time()
+        self.sort_riddle_data[index]['start_time'] = re.split('[-|:|.|\s]',str(datetime.now()))
         # 諸々を書き込み
         with open('./data/sort_riddle_data.json', 'w') as f:
             json.dump(self.sort_riddle_data, f, indent=4)
@@ -130,21 +145,24 @@ class SortRiddleCog(commands.Cog):
         if a is None:
             await ctx.send(f'{ctx.author.mention} **!start** と入力するにゃ')
             return
+
         # 長さがあってるかチェック
         if len(a) != len(answer):
             await ctx.send(f'{ctx.author.mention} ぶっぶー！長さが違うにゃ')
             return
+
         # 正誤判定
         cnt = 0
         for i in range(len(a)):
             if a[i] == answer[i]:
                 cnt += 1
         if cnt == len(answer):
-            correct_time = time.time()
-            td = datetime.timedelta(
-                seconds=correct_time - self.sort_riddle_data[index]["start_time"])
-            await ctx.send(f'{ctx.author.mention} 正解だにゃ\n クリア時間は{td}だにゃ\n \
-            https://ja.wikipedia.org/wiki/{answer}')
+            correct_time = datetime.now()
+            # str2datetime
+            start_time = datetime(*map(int, self.sort_riddle_data[index]["start_time"]))
+            time_delta = correct_time - start_time
+            await ctx.send(f'{ctx.author.mention} 正解だにゃ\nクリア時間は **{str(time_delta)[:-4]}** だにゃ')
+            await ctx.send(f'https://ja.wikipedia.org/wiki/{answer}')
             # answer, question, start_time を消去
             self.sort_riddle_data[index]['answer'] = None
             self.sort_riddle_data[index]['question'] = None

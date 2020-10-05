@@ -78,7 +78,7 @@ class SortRiddleCog(commands.Cog):
             return
 
         if (q := self.sort_riddle_data[index]['question']) is not None:
-            print(q)
+            # print(q)
             await ctx.send(f'問題は **{q}** だにゃ')
             return
 

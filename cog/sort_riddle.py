@@ -72,6 +72,15 @@ class SortRiddleCog(commands.Cog):
 
     @commands.command()
     async def start(self, ctx):
+
+        # await ctx.send(f'{ctx.author}')
+        # await ctx.send(f'`{ctx.author.guild}`')
+        # # print(ctx.author.dm_channel)
+        # return
+        if 'guild' not in dir(ctx.author):
+            await ctx.send('**!start** はDM限定だにゃ')
+            return
+
         index = bisect.bisect_left(self.guild_id_list, ctx.author.guild.id)
         if self.guild_id_list[index] != ctx.author.guild.id:
             await ctx.send('guild id が存在してないにゃ')
@@ -114,7 +123,7 @@ class SortRiddleCog(commands.Cog):
         index = bisect.bisect_left(self.guild_id_list, ctx.author.guild.id)
         a = self.sort_riddle_data[index]['answer']
         if a is None:
-            await ctx.send(f'{ctx.author.mention} **/start** と入力するにゃ')
+            await ctx.send(f'{ctx.author.mention} **!start** と入力するにゃ')
             return
         # 長さがあってるかチェック
         if len(a) != len(answer):
@@ -145,7 +154,7 @@ class SortRiddleCog(commands.Cog):
         index = bisect.bisect_left(self.guild_id_list, ctx.author.guild.id)
         a = self.sort_riddle_data[index]['answer']
         if a is None:
-            await ctx.send(f'{ctx.author.mention} **/start** と入力してにゃ')
+            await ctx.send(f'{ctx.author.mention} **!start** と入力してにゃ')
             return
         await ctx.send(f'最初の文字は **{a[0]}** だにゃ')
 
@@ -154,7 +163,7 @@ class SortRiddleCog(commands.Cog):
         index = bisect.bisect_left(self.guild_id_list, ctx.author.guild.id)
         a = self.sort_riddle_data[index]['answer']
         if a is None:
-            await ctx.send(f'{ctx.author.mention} **/start** と入力してにゃ')
+            await ctx.send(f'{ctx.author.mention} **!start** と入力してにゃ')
             return
 
         await ctx.send(f'わからないのかにゃ？ \n答えは **{a}** だにゃ\nhttps://ja.wikipedia.org/wiki/{a}')

@@ -81,7 +81,8 @@ class SortRiddleCog(commands.Cog):
             print(q)
             await ctx.send(f'問題は **{q}** だにゃ')
             return
-        print(self.sort_riddle_data[index]['question'])
+
+        # print(self.sort_riddle_data[index]['question'])
         link = 'https://ja.wikipedia.org/w/api.php?action=query&list=random&format=json&rnnamespace=0&rnlimit=1'
         response = requests.get(link)
         json_data = response.json()

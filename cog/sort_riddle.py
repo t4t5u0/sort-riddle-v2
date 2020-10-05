@@ -119,6 +119,11 @@ class SortRiddleCog(commands.Cog):
 
     @commands.command()
     async def answer(self, ctx, answer: str):
+
+        if 'guild' not in dir(ctx.author):
+            await ctx.send('**!answer** はDM限定だにゃ')
+            return
+
         # questionが存在するかチェック
         index = bisect.bisect_left(self.guild_id_list, ctx.author.guild.id)
         a = self.sort_riddle_data[index]['answer']
@@ -151,15 +156,26 @@ class SortRiddleCog(commands.Cog):
 
     @commands.command()
     async def hint(self, ctx):
+
+        if 'guild' not in dir(ctx.author):
+            await ctx.send('**!hint** はDM限定だにゃ')
+            return
+
         index = bisect.bisect_left(self.guild_id_list, ctx.author.guild.id)
         a = self.sort_riddle_data[index]['answer']
         if a is None:
             await ctx.send(f'{ctx.author.mention} **!start** と入力してにゃ')
             return
+
         await ctx.send(f'最初の文字は **{a[0]}** だにゃ')
 
     @commands.command()
     async def giveup(self, ctx):
+
+        if 'guild' not in dir(ctx.author):
+            await ctx.send('**!giveup** はDM限定だにゃ')
+            return
+
         index = bisect.bisect_left(self.guild_id_list, ctx.author.guild.id)
         a = self.sort_riddle_data[index]['answer']
         if a is None:

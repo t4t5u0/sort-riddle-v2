@@ -71,7 +71,7 @@ class SortRiddleCog(commands.Cog):
             writer = csv.writer(f)
             writer.writerow(self.guild_id_list)
 
-    @commands.command()
+    @commands.command(aliases=['s'])
     async def start(self, ctx):
 
         if 'guild' not in dir(ctx.author):
@@ -133,7 +133,7 @@ class SortRiddleCog(commands.Cog):
         with open('./data/sort_riddle_data.json', 'w') as f:
             json.dump(self.sort_riddle_data, f, indent=4)
 
-    @commands.command()
+    @commands.command(aliases=['a'])
     async def answer(self, ctx, answer: str):
 
         if 'guild' not in dir(ctx.author):
@@ -173,7 +173,7 @@ class SortRiddleCog(commands.Cog):
         else:
             await ctx.send(f'{ctx.author.mention} ぶっぶー！ **{cnt}** 文字あってるにゃ')
 
-    @commands.command()
+    @commands.command(aliases=['h'])
     async def hint(self, ctx):
 
         if 'guild' not in dir(ctx.author):
@@ -188,7 +188,7 @@ class SortRiddleCog(commands.Cog):
 
         await ctx.send(f'最初の文字は **{a[0]}** だにゃ')
 
-    @commands.command()
+    @commands.command(aliases=['g'])
     async def giveup(self, ctx):
 
         if 'guild' not in dir(ctx.author):

@@ -79,7 +79,7 @@ class SortRiddleCog(commands.Cog):
             return
 
         # guild_id が登録されていなかったときの処理
-        # 全部これでいい気もする
+        # 全部これでいい気もする->遅いから良くない．あくまで予防
         index = bisect.bisect_left(self.guild_id_list, ctx.author.guild.id)
         if ctx.author.guild.id not in self.guild_id_list:
             info = {
@@ -99,15 +99,11 @@ class SortRiddleCog(commands.Cog):
             with open('./data/guild_id_list.csv', 'w') as f:
                 writer = csv.writer(f)
                 writer.writerow(self.guild_id_list)
-            # await ctx.send('guild id が存在してないにゃ')
-            # return
 
         if (q := self.sort_riddle_data[index]['question']) is not None:
-            # print(q)
             await ctx.send(f'問題は **{q}** だにゃ')
             return
 
-        # print(self.sort_riddle_data[index]['question'])
         link = 'https://ja.wikipedia.org/w/api.php?action=query&list=random&format=json&rnnamespace=0&rnlimit=1'
         response = requests.get(link)
         json_data = response.json()
@@ -153,25 +149,26 @@ class SortRiddleCog(commands.Cog):
             return
 
         # 正誤判定
-        cnt = 0
-        for i in range(len(a)):
-            if a[i] == answer[i]:
-                cnt += 1
-        if cnt == len(answer):
-            correct_time = datetime.now()
-            # str2datetime
-            start_time = datetime(*map(int, self.sort_riddle_data[index]["start_time"]))
-            time_delta = correct_time - start_time
-            await ctx.send(f'{ctx.author.mention} 正解だにゃ\nクリア時間は **{str(time_delta)[:-4]}** だにゃ')
-            await ctx.send(f'https://ja.wikipedia.org/wiki/{answer}')
-            # answer, question, start_time を消去
-            self.sort_riddle_data[index]['answer'] = None
-            self.sort_riddle_data[index]['question'] = None
-            self.sort_riddle_data[index]['start_time'] = None
-            with open('./data/sort_riddle_data.json', 'w') as f:
-                json.dump(self.sort_riddle_data, f, indent=4)
-        else:
+        if a != answer:
+            cnt = 0
+            for i in range(len(a)):
+                if a[i] == answer[i]:
+                    cnt += 1
             await ctx.send(f'{ctx.author.mention} ぶっぶー！ **{cnt}** 文字あってるにゃ')
+            return
+
+        correct_time = datetime.now()
+        # str2datetime
+        start_time = datetime(*map(int, self.sort_riddle_data[index]["start_time"]))
+        time_delta = correct_time - start_time
+        await ctx.send(f'{ctx.author.mention} 正解だにゃ\nクリア時間は **{str(time_delta)[:-4]}** だにゃ')
+        await ctx.send(f'https://ja.wikipedia.org/wiki/{answer}')
+        # answer, question, start_time を消去
+        self.sort_riddle_data[index]['answer'] = None
+        self.sort_riddle_data[index]['question'] = None
+        self.sort_riddle_data[index]['start_time'] = None
+        with open('./data/sort_riddle_data.json', 'w') as f:
+            json.dump(self.sort_riddle_data, f, indent=4)
 
     @commands.command(aliases=['h'])
     async def hint(self, ctx):

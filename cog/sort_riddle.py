@@ -7,6 +7,7 @@ from datetime import datetime
 
 import discord
 import requests
+import regex
 # import pandas as pd
 from discord.ext import commands
 
@@ -80,7 +81,7 @@ class SortRiddleCog(commands.Cog):
             writer.writerow(self.guild_id_list)
 
     @commands.command(aliases=['s'])
-    async def start(self, ctx):
+    async def start(self, ctx, *arg):
 
         if 'guild' not in dir(ctx.author):
             await ctx.send('**!start** はDM限定だにゃ')
@@ -112,9 +113,34 @@ class SortRiddleCog(commands.Cog):
             await ctx.send(f'問題は **{q}** だにゃ')
             return
 
-        link = 'https://ja.wikipedia.org/w/api.php?action=query&list=random&format=json&rnnamespace=0&rnlimit=1'
-        response = requests.get(link)
-        json_data = response.json()
+        # arg の処理
+        # print(arg)
+        arg: str = arg[0] if arg else ''
+        iso_693_1 = 'ja'
+        if arg not in ['', 'nohan']:
+            iso_693_1 = arg
+        print(arg)
+        link = f'https://{iso_693_1}.wikipedia.org/w/api.php?action=query&list=random&format=json&rnnamespace=0&rnlimit=1'
+        if arg == 'nohan':
+            while True:
+                response = requests.get(link)
+                json_data = response.json()
+                a: str = json_data['query']['random'][0]['title'].replace(
+                    ' ', '_')
+                if regex.search(r'\p{Han}', a):
+                    print(f'{a=}')
+                    continue
+                else:
+                    break
+        else:
+            try:
+                response = requests.get(link)
+            except requests.exceptions.ConnectionError:
+                await ctx.send('言語コードが存在しないにゃ')
+                await ctx.send(f'https://ja.wikipedia.org/wiki/ISO_639-1%E3%82%B3%E3%83%BC%E3%83%89%E4%B8%80%E8%A6%A7')
+                return
+            json_data = response.json()
+            a: str = json_data['query']['random'][0]['title'].replace(' ', '_')
 
         """
         json_data
@@ -126,7 +152,6 @@ class SortRiddleCog(commands.Cog):
                                 'title': 'Template:Country alias 岐阜県'}]}}
         """
 
-        a = json_data['query']['random'][0]['title'].replace(' ', '_')
         self.sort_riddle_data[index]['answer'] = a
         q = ''.join(sorted(list(a)))
         self.sort_riddle_data[index]['question'] = q

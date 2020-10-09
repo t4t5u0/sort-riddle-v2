@@ -10,6 +10,7 @@ import requests
 # import pandas as pd
 from discord.ext import commands
 
+
 class SortRiddleCog(commands.Cog):
 
     def __init__(self, bot):
@@ -23,12 +24,12 @@ class SortRiddleCog(commands.Cog):
             self.sort_riddle_data = json.load(f)
 
     # answer, question, start_time をNoneに戻す関数
-    def clear_json(self,index:int):
+    def clear_json(self, index: int):
         self.sort_riddle_data[index]['answer'] = None
         self.sort_riddle_data[index]['question'] = None
         self.sort_riddle_data[index]['start_time'] = None
         with open('./data/sort_riddle_data.json', 'w') as f:
-            json.dump(self.sort_riddle_data, f, indent=4)    
+            json.dump(self.sort_riddle_data, f, indent=4)
 
     @commands.command()
     async def neko(self, ctx):
@@ -131,7 +132,8 @@ class SortRiddleCog(commands.Cog):
         self.sort_riddle_data[index]['question'] = q
         await ctx.send(f'問題は **{q}** だにゃ')
 
-        self.sort_riddle_data[index]['start_time'] = re.split('[-|:|.|\s]',str(datetime.now()))
+        self.sort_riddle_data[index]['start_time'] = re.split(
+            '[-|:|.|\s]', str(datetime.now()))
         # 諸々を書き込み
         with open('./data/sort_riddle_data.json', 'w') as f:
             json.dump(self.sort_riddle_data, f, indent=4)
@@ -166,12 +168,13 @@ class SortRiddleCog(commands.Cog):
 
         correct_time = datetime.now()
         # str2datetime
-        start_time = datetime(*map(int, self.sort_riddle_data[index]["start_time"]))
+        start_time = datetime(
+            *map(int, self.sort_riddle_data[index]["start_time"]))
         time_delta = correct_time - start_time
         await ctx.send(f'{ctx.author.mention} 正解だにゃ\nクリア時間は **{str(time_delta)[:-4]}** だにゃ')
         await ctx.send(f'https://ja.wikipedia.org/wiki/{answer}')
         # answer, question, start_time を消去
-        SortRiddleCog.clear_json(self,index)
+        self.clear_json(index)
 
     @commands.command(aliases=['h'])
     async def hint(self, ctx):
@@ -203,7 +206,8 @@ class SortRiddleCog(commands.Cog):
 
         await ctx.send(f'わからないのかにゃ？ \n答えは **{a}** だにゃ\nhttps://ja.wikipedia.org/wiki/{a}')
 
-        SortRiddleCog.clear_json(self,index)
+        self.clear_json(index)
+
 
 def setup(bot):
     return bot.add_cog(SortRiddleCog(bot))

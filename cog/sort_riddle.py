@@ -28,6 +28,7 @@ class SortRiddleCog(commands.Cog):
     def clear_json(self, index: int):
         self.sort_riddle_data[index]['answer'] = None
         self.sort_riddle_data[index]['question'] = None
+        self.sort_riddle_data[index]['iso_693_1'] = None
         self.sort_riddle_data[index]['start_time'] = None
         with open('./data/sort_riddle_data.json', 'w') as f:
             json.dump(self.sort_riddle_data, f, indent=4)
@@ -51,6 +52,7 @@ class SortRiddleCog(commands.Cog):
             "channel_id": None,
             "answer": None,
             "question": None,
+            "iso_693_1": None,
             "start_time": None
         }
         self.sort_riddle_data.insert(to_insert_index, info)
@@ -118,8 +120,8 @@ class SortRiddleCog(commands.Cog):
         arg: str = arg[0] if arg else ''
         iso_693_1 = 'ja'
         if arg not in ['', 'nohan']:
-            iso_693_1 = arg
-        print(arg)
+            iso_693_1 = arg.lower()
+
         link = f'https://{iso_693_1}.wikipedia.org/w/api.php?action=query&list=random&format=json&rnnamespace=0&rnlimit=1'
         if arg == 'nohan':
             while True:
@@ -156,7 +158,7 @@ class SortRiddleCog(commands.Cog):
         q = ''.join(sorted(list(a)))
         self.sort_riddle_data[index]['question'] = q
         await ctx.send(f'問題は **{q}** だにゃ')
-
+        self.sort_riddle_data[index]['iso_693_1'] = iso_693_1
         self.sort_riddle_data[index]['start_time'] = re.split(
             '[-|:|.|\s]', str(datetime.now()))
         # 諸々を書き込み
@@ -197,7 +199,7 @@ class SortRiddleCog(commands.Cog):
             *map(int, self.sort_riddle_data[index]["start_time"]))
         time_delta = correct_time - start_time
         await ctx.send(f'{ctx.author.mention} 正解だにゃ\nクリア時間は **{str(time_delta)[:-4]}** だにゃ')
-        await ctx.send(f'https://ja.wikipedia.org/wiki/{answer}')
+        await ctx.send(f'https://{self.sort_riddle_data[index]["iso_693_1"]}.wikipedia.org/wiki/{answer}')
         # answer, question, start_time を消去
         self.clear_json(index)
 

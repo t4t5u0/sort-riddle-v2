@@ -10,7 +10,6 @@ import requests
 # import pandas as pd
 from discord.ext import commands
 
-
 class SortRiddleCog(commands.Cog):
 
     def __init__(self, bot):
@@ -22,6 +21,14 @@ class SortRiddleCog(commands.Cog):
             self.guild_id_list = [int(y) for x in csv.reader(f) for y in x]
         with open('./data/sort_riddle_data.json') as f:
             self.sort_riddle_data = json.load(f)
+
+    # answer, question, start_time をNoneに戻す関数
+    def clear_json(self,index:int):
+        self.sort_riddle_data[index]['answer'] = None
+        self.sort_riddle_data[index]['question'] = None
+        self.sort_riddle_data[index]['start_time'] = None
+        with open('./data/sort_riddle_data.json', 'w') as f:
+            json.dump(self.sort_riddle_data, f, indent=4)    
 
     @commands.command()
     async def neko(self, ctx):
@@ -164,11 +171,7 @@ class SortRiddleCog(commands.Cog):
         await ctx.send(f'{ctx.author.mention} 正解だにゃ\nクリア時間は **{str(time_delta)[:-4]}** だにゃ')
         await ctx.send(f'https://ja.wikipedia.org/wiki/{answer}')
         # answer, question, start_time を消去
-        self.sort_riddle_data[index]['answer'] = None
-        self.sort_riddle_data[index]['question'] = None
-        self.sort_riddle_data[index]['start_time'] = None
-        with open('./data/sort_riddle_data.json', 'w') as f:
-            json.dump(self.sort_riddle_data, f, indent=4)
+        SortRiddleCog.clear_json(self,index)
 
     @commands.command(aliases=['h'])
     async def hint(self, ctx):
@@ -200,13 +203,7 @@ class SortRiddleCog(commands.Cog):
 
         await ctx.send(f'わからないのかにゃ？ \n答えは **{a}** だにゃ\nhttps://ja.wikipedia.org/wiki/{a}')
 
-        # answer, question, start_time を消去
-        self.sort_riddle_data[index]['answer'] = None
-        self.sort_riddle_data[index]['question'] = None
-        self.sort_riddle_data[index]['start_time'] = None
-        with open('./data/sort_riddle_data.json', 'w') as f:
-            json.dump(self.sort_riddle_data, f, indent=4)
-
+        SortRiddleCog.clear_json(self,index)
 
 def setup(bot):
     return bot.add_cog(SortRiddleCog(bot))

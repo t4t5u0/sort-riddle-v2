@@ -231,7 +231,8 @@ class SortRiddleCog(commands.Cog):
             await ctx.send(f'{ctx.author.mention} **!start** と入力してにゃ')
             return
 
-        await ctx.send(f'わからないのかにゃ？ \n答えは **{a}** だにゃ\nhttps://ja.wikipedia.org/wiki/{a}')
+        await ctx.send(f'わからないのかにゃ？ \n答えは **{a}** だにゃ')
+        await ctx.send(f'https://{self.sort_riddle_data[index]["iso_693_1"]}.wikipedia.org/wiki/{a}')
 
         self.clear_json(index)
 
